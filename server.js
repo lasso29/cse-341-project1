@@ -1,11 +1,15 @@
 const express = require("express");
 const { connectToDb } = require("./db/connect");
 const contactsRoute = require("./routes/contacts");
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
 
 const app = express();
-app.use(express.json()); // ✅ This is needed to parse JSON
+const swaggerDocument = YAML.load("./swagger.yaml");
 
-app.use("/contacts", contactsRoute); // ✅ Route should come AFTER middleware
+app.use(express.json());
+app.use("/contacts", contactsRoute);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 connectToDb((err) => {
   if (!err) {
